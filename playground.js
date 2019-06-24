@@ -31,14 +31,39 @@ const reduce = curry((f, acc, iter) => {
   return acc;
 });
 
+const take = curry((l, iter) => {
+  let res = [];
+  for (const a of iter) {
+    res.push(a);
+    if (res.length === l) return res;
+  }
+  return res;
+});
 const go = (...args) => reduce((a, f) => f(a), args);
 const pipe = (f, ...fs) => (...as) => go(f(...as), ...fs);
-
-add = curry((a, b) => a + b)
+const range = l => {
+  let i = -1;
+  let res = [];
+  while (++i < l) {
+    res.push(i);
+  }
+  return res;
+};
 
 const L = {};
+
+L.range = function* (ㅣ) {
+  let i = -1;
+  while (++i < ㅣ) {
+    yield i;
+  }
+};
+
 L.map = function* (f, iter) {
   for (const a of iter) {
     yield f(a);
   }
 };
+
+console.log(...L.range(4))
+
