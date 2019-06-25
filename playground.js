@@ -1,6 +1,8 @@
 const log = console.log;
 
 const curry = f => (a, ..._) => _.length ? f(a, ..._) : (..._) => f(a, ..._);
+const isIterable = (a) => a && a[Symbol.iterator];
+
 const map = curry((f, iter) => {
   let res = [];
   for (const a of iter) {
@@ -39,6 +41,7 @@ const take = curry((l, iter) => {
   }
   return res;
 });
+const takeAll = take(Infinity);
 const go = (...args) => reduce((a, f) => f(a), args);
 const pipe = (f, ...fs) => (...as) => go(f(...as), ...fs);
 const range = l => {
@@ -65,5 +68,19 @@ L.map = function* (f, iter) {
   }
 };
 
-console.log(...L.range(4))
+L.flatten = function* (iter) {
+  for (const a of iter) {
+    if (isIterable(a)) for (const b of a) yield b;
+    else yield a;
+  }
+};
+
+L.deepFlat = function* recur(iter) {
+  for (const a of iter) {
+    if (isIterable(a)) yield* recur(a);
+    else yield a;
+  }
+}
+
+const flatten = pipe(L.flatten, takeAll);
 
